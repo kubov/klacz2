@@ -6,6 +6,11 @@ import Network.Fancy
 import Network.FastIRC
 import Network.FastIRC.Session
 
+import Control.Monad.State
+import Control.Applicative
+
+import qualified Data.Map as M
+
 configNickname = return "klacz2"
 configUser = return "klacz"
 configRealName = return "Klacz"
@@ -19,7 +24,13 @@ klaczParams = Params
               configPassword
               configAddress
 
-botOnConnect = return ()
+configChannels = ["#qwpx"]
+
+botOnConnect :: Bot ()
+botOnConnect = do
+  session <- botSession <$> get
+  return ()
+    where channelMap = M.fromList (map (flip (,) Nothing) configChannels)
 
 initBot :: BotSession -> IO ()
 initBot session = do

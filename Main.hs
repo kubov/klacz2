@@ -2,6 +2,8 @@
 
 module Main where
 
+import IRC
+
 import Network.Fancy
 import Network.FastIRC
 import Network.FastIRC.Session
@@ -11,11 +13,11 @@ import Control.Applicative
 
 import qualified Data.Map as M
 
-configNickname = return "klacz2"
+configNickname = return "klacz2Adam"
 configUser = return "klacz"
 configRealName = return "Klacz"
 configPassword = Nothing
-configAddress = IPv4 "localhost" 6667
+configAddress = IPv4 "irc.freenode.net" 6667
 
 klaczParams = Params
               configNickname
@@ -24,13 +26,11 @@ klaczParams = Params
               configPassword
               configAddress
 
-configChannels = ["#qwpx"]
+configChannels = ["#klacztest"]
 
 botOnConnect :: Bot ()
 botOnConnect = do
-  session <- botSession <$> get
-  return ()
-    where channelMap = M.fromList (map (flip (,) Nothing) configChannels)
+  ircJoin configChannels
 
 initBot :: BotSession -> IO ()
 initBot session = do

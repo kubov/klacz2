@@ -2,6 +2,7 @@
 
 module Main where
 
+import KlaczMonad
 import IRC
 import Functionality
 
@@ -10,6 +11,7 @@ import Network.FastIRC
 import Network.FastIRC.Session
 
 import Control.Monad.State
+import Control.Monad.Error
 import Control.Applicative
 
 import qualified Data.Map as M
@@ -33,13 +35,21 @@ botOnConnect :: Bot ()
 botOnConnect = do
   ircJoin configChannels
 
-botOnMessage :: Message -> Bot ()
-botOnMessage message = do
+dispatchMessage :: Message -> Bot (Either KlaczError ())
+dispatchMessage message = runErrorT $ do
   case msgCommand message of
     PrivMsgCmd targets msgText ->
       handlePrivMsg (msgOrigin message) targets msgText
-    _ -> liftIO $ putStrLn $ "Ignoring message: " ++ show message
-  return ()
+    _ -> throwError $
+         UnhandledMessage message
+  
+
+botOnMessage :: Message -> Bot ()
+botOnMessage message = do
+  result <- dispatchMessage message
+  case result of
+    Left error -> liftIO . putStrLn . show $ error
+    Right () -> return ()
 
 initBot :: BotSession -> IO ()
 initBot session = do

@@ -3,6 +3,7 @@
 module Main where
 
 import IRC
+import Functionality
 
 import Network.Fancy
 import Network.FastIRC
@@ -32,9 +33,18 @@ botOnConnect :: Bot ()
 botOnConnect = do
   ircJoin configChannels
 
+botOnMessage :: Message -> Bot ()
+botOnMessage message = do
+  case msgCommand message of
+    PrivMsgCmd targets msgText ->
+      handlePrivMsg (msgOrigin message) targets msgText
+    _ -> liftIO $ putStrLn $ "Ignoring message: " ++ show message
+  return ()
+
 initBot :: BotSession -> IO ()
 initBot session = do
   onConnect session botOnConnect
+  onMessage session botOnMessage
   return ()
 
 main = do

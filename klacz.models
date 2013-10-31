@@ -1,0 +1,27 @@
+Term
+    name Text
+    text Text
+    deriving Show
+
+Link
+    url Text
+    nick Text
+    time UTCTime
+    count Int
+    UniqueLink url
+    deriving Show
+
+Advice
+    nick Text
+    top Text
+    bottom Text
+
+User
+    nick Text
+    UniqueUser nick
+
+Access
+    channel Text
+    level Int
+    user UserId
+    UniqueAccess channel user

@@ -16,5 +16,5 @@ Description:
 Executable klacz2
   Build-depends:  base >= 4 && < 5, fastirc >= 0.3.0, containers,
                   mtl, network-fancy, transformers, bytestring,
-                  attoparsec
+                  attoparsec, persistent, persistent-postgresql
   Main-is:        Main.hs
